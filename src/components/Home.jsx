@@ -1,5 +1,5 @@
 import React from 'react'
-import image from '../assets/home.png'; // with import
+//import image from '../assets/home.png'; // with import
 
 export default function Home() {
     return (
@@ -7,7 +7,7 @@ export default function Home() {
             <img style={{
                 objectFit: 'contain',
                 width: '100%'
-            }} src={image} />
+            }} src="" />
         </div>
     )
 }
