@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusOutlined, UpCircleOutlined } from '@ant-design/icons';
 import {
     Button,
     Form,
     Input,
     InputNumber,
+    message,
     Select,
     Space,
     Upload,
 } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 
@@ -19,12 +21,41 @@ const normFile = (e) => {
     return e?.file;
 };
 
+const api = "https://shop-pd211-awdhcvf3ebdpb7es.polandcentral-01.azurewebsites.net/api/products/";
+
 const CreateProduct = () => {
+
+    const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        fetch(api + 'categories').then(res => res.json()).then(data => {
+            setCategories(data.map(x => { return { label: x.name, value: x.id } }));
+        });
+    }, []);
 
     const onSubmit = (item) => {
         console.log(item);
 
-        // upload to server
+        // TODO: upload to server
+        fetch(api, {
+            method: "POST",
+            body: JSON.stringify(item),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(res => {
+            if (res.status === 200) {
+                message.success("Product created successfuly!");
+                navigate(-1);
+            }
+            else {
+                res.json().then(res => {
+                    const msg = res.errors[Object.keys(res.errors)[0]][0];
+                    message.error(msg);
+                })
+            }
+        })
 
     }
     return (
@@ -64,17 +95,18 @@ const CreateProduct = () => {
                     <InputNumber style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item label="Category" name="categoryId">
-                    <Select>
-                        <Select.Option value="demo">Demo</Select.Option>
-                    </Select>
+                    <Select options={categories}></Select>
                 </Form.Item>
                 <Form.Item label="Description" name="description">
                     <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
+                {/* <Form.Item label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
                     <Upload maxCount={1}>
                         <Button icon={<UpCircleOutlined />}>Click to Upload</Button>
                     </Upload>
+                </Form.Item> */}
+                <Form.Item label="Image" name="imageUrl">
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     wrapperCol={{
