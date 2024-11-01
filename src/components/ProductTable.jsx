@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, message, Popconfirm, Space, Table, Tag } from 'antd';
-import { AppstoreAddOutlined, DeleteFilled, EditFilled, InfoCircleFilled, SearchOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, DeleteFilled, EditFilled, InfoCircleFilled, LikeFilled, LikeOutlined, SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { ProductsContext } from '../contexts/products.context';
 
 const api = "https://shop-pd211-awdhcvf3ebdpb7es.polandcentral-01.azurewebsites.net/api/products/";
 
 
 const ProductTable = () => {
 
+    const { setCount, count } = useContext(ProductsContext);
     const [products, setProducts] = useState([]);
 
     const columns = [
@@ -45,26 +47,6 @@ const ProductTable = () => {
                     :
                     <Tag color="volcano">Out of Stock</Tag>
         },
-        // {
-        //     title: 'Tags',
-        //     key: 'tags',
-        //     dataIndex: 'tags',
-        //     render: (_, { tags }) => (
-        //         <>
-        //             {tags.map((tag) => {
-        //                 let color = tag.length > 5 ? 'geekblue' : 'green';
-        //                 if (tag === 'loser') {
-        //                     color = 'volcano';
-        //                 }
-        //                 return (
-        //                     <Tag color={color} key={tag}>
-        //                         {tag.toUpperCase()}
-        //                     </Tag>
-        //                 );
-        //             })}
-        //         </>
-        //     ),
-        // },
         {
             title: 'Action',
             key: 'action',
@@ -73,6 +55,7 @@ const ProductTable = () => {
                     <Link to={`/products/${record.id}`}>
                         <Button color="default" variant="outlined" icon={<InfoCircleFilled />} />
                     </Link>
+                    <Button style={{ color: '#61916e' }} variant="outlined" icon={<LikeFilled />} />
                     <Link to={`/edit/${record.id}`}>
                         <Button style={{ color: '#faad14' }} variant="outlined" icon={<EditFilled />} />
                     </Link>
@@ -96,6 +79,7 @@ const ProductTable = () => {
             .then(res => res.json())
             .then(data => {
                 setProducts(data.sort((x, y) => y.id - x.id));
+                setCount(data.length);
             });
     }, []);
 
@@ -107,6 +91,7 @@ const ProductTable = () => {
             if (res.status === 200) {
                 setProducts(products.filter(x => x.id !== id));
                 message.success('Product deleted successfuly!');
+                setCount(count - 1);
             }
             else
                 message.error("Something went wrong!");

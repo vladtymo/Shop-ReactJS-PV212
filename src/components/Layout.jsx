@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Breadcrumb, Layout as LayoutAnt, Menu, theme } from 'antd';
-import { HomeFilled, InfoCircleFilled, ProductFilled } from '@ant-design/icons';
+import { HomeFilled, InfoCircleFilled, LikeFilled, ProductFilled } from '@ant-design/icons';
 import ProductTable from './ProductTable';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { ProductsContext } from '../contexts/products.context';
 
 const { Header, Content, Footer } = LayoutAnt;
 
@@ -18,6 +19,11 @@ const items = [
         icon: <Link to="/products"><ProductFilled /></Link>,
     },
     {
+        key: '/favorites',
+        label: "Favorites",
+        icon: <Link to="/favorites"><LikeFilled /></Link>,
+    },
+    {
         key: '/about',
         label: "About",
         icon: <Link to="/about"><InfoCircleFilled /></Link>,
@@ -25,6 +31,8 @@ const items = [
 ];
 
 const Layout = () => {
+
+    const { count } = useContext(ProductsContext);
 
     const [current] = useState(useLocation().pathname);
 
@@ -50,6 +58,7 @@ const Layout = () => {
                         minWidth: 0,
                     }}
                 />
+                <span style={{ color: 'white' }}>Count: {count}</span>
             </Header>
 
             <Content className='main'
