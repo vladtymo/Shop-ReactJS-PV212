@@ -8,6 +8,7 @@ import ProductTable from './components/ProductTable'
 import Home from './components/Home'
 import ProductInfo from './components/ProductInfo'
 import CreateProduct from './components/CreateProduct'
+import EditProduct from './components/EditProduct'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="products" element={<ProductTable />} />
           <Route path="create" element={<CreateProduct />} />
+          <Route path="edit/:id" element={<EditProduct />} />
           <Route path="products/:id" element={<ProductInfo />} />
           <Route path="about" element={<About />} />
         </Route>

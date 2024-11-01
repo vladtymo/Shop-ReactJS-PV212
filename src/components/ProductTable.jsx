@@ -3,7 +3,7 @@ import { Button, message, Popconfirm, Space, Table, Tag } from 'antd';
 import { AppstoreAddOutlined, DeleteFilled, EditFilled, InfoCircleFilled, SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
-const api = "https://shop-pd211-awdhcvf3ebdpb7es.polandcentral-01.azurewebsites.net/api/products/all";
+const api = "https://shop-pd211-awdhcvf3ebdpb7es.polandcentral-01.azurewebsites.net/api/products/";
 
 
 const ProductTable = () => {
@@ -73,7 +73,9 @@ const ProductTable = () => {
                     <Link to={`/products/${record.id}`}>
                         <Button color="default" variant="outlined" icon={<InfoCircleFilled />} />
                     </Link>
-                    <Button style={{ color: '#faad14' }} variant="outlined" icon={<EditFilled />} />
+                    <Link to={`/edit/${record.id}`}>
+                        <Button style={{ color: '#faad14' }} variant="outlined" icon={<EditFilled />} />
+                    </Link>
                     <Popconfirm
                         title="Delete the product"
                         description={`Are you sure to delete ${record.title}?`}
@@ -90,18 +92,26 @@ const ProductTable = () => {
 
     // load data from server
     useEffect(() => {
-        fetch(api)
+        fetch(api + "all")
             .then(res => res.json())
             .then(data => {
-                setProducts(data);
+                setProducts(data.sort((x, y) => y.id - x.id));
             });
     }, []);
 
     const deleteItem = (id) => {
 
-        // TODO: HTTP delete request
-        setProducts(products.filter(x => x.id !== id));
-        message.success('Product deleted successfuly!');
+        fetch(api + id, {
+            method: "DELETE"
+        }).then(res => {
+            if (res.status === 200) {
+                setProducts(products.filter(x => x.id !== id));
+                message.success('Product deleted successfuly!');
+            }
+            else
+                message.error("Something went wrong!");
+        });
+
     }
 
     return (

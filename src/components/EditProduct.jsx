@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { LeftOutlined, PlusOutlined, UpCircleOutlined } from '@ant-design/icons';
 import {
     Button,
     Form,
@@ -7,30 +6,32 @@ import {
     InputNumber,
     message,
     Select,
-    Space,
-    Upload,
+    Space
 } from 'antd';
-import { useNavigate } from 'react-router-dom';
-
-const { TextArea } = Input;
-
-const normFile = (e) => {
-    if (Array.isArray(e)) {
-        return e[0];
-    }
-    return e?.file;
-};
+import { useNavigate, useParams } from 'react-router-dom';
+import TextArea from 'antd/es/input/TextArea';
+import { LeftOutlined } from '@ant-design/icons';
 
 const api = "https://shop-pd211-awdhcvf3ebdpb7es.polandcentral-01.azurewebsites.net/api/products/";
 
-const CreateProduct = () => {
+const EditProduct = () => {
 
-    const navigate = useNavigate();
+    const [product, setProduct] = useState({});
     const [categories, setCategories] = useState([]);
+    const navigate = useNavigate();
+    const [form] = Form.useForm();
+
+    const { id } = useParams();
 
     useEffect(() => {
         fetch(api + 'categories').then(res => res.json()).then(data => {
             setCategories(data.map(x => { return { label: x.name, value: x.id } }));
+        });
+
+        fetch(api + id).then(res => res.json()).then(data => {
+            setProduct(data);
+            form.setFieldsValue(data);
+            console.log(data);
         });
     }, []);
 
@@ -39,14 +40,14 @@ const CreateProduct = () => {
 
         // TODO: upload to server
         fetch(api, {
-            method: "POST",
+            method: "PUT",
             body: JSON.stringify(item),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(res => {
             if (res.status === 200) {
-                message.success("Product created successfuly!");
+                message.success("Product edited successfuly!");
                 navigate(-1);
             }
             else {
@@ -61,7 +62,7 @@ const CreateProduct = () => {
     return (
         <>
             <Button onClick={() => navigate(-1)} color="default" variant="text" icon={<LeftOutlined />}></Button>
-            <h2>Create New Product</h2>
+            <h2>Edit Product</h2>
 
             <Form
                 labelCol={{
@@ -75,8 +76,10 @@ const CreateProduct = () => {
                 style={{
                     maxWidth: 600,
                 }}
+                form={form}
                 onFinish={onSubmit}
             >
+                <Form.Item name="id" hidden></Form.Item>
                 <Form.Item label="Title" name="title"
                     rules={[
                         {
@@ -101,11 +104,6 @@ const CreateProduct = () => {
                 <Form.Item label="Description" name="description">
                     <TextArea rows={4} />
                 </Form.Item>
-                {/* <Form.Item label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
-                    <Upload maxCount={1}>
-                        <Button icon={<UpCircleOutlined />}>Click to Upload</Button>
-                    </Upload>
-                </Form.Item> */}
                 <Form.Item label="Image" name="imageUrl">
                     <Input />
                 </Form.Item>
@@ -120,7 +118,7 @@ const CreateProduct = () => {
                             Cancel
                         </Button>
                         <Button type="primary" htmlType="submit">
-                            Create
+                            Edit
                         </Button>
                     </Space>
                 </Form.Item>
@@ -128,4 +126,4 @@ const CreateProduct = () => {
         </>
     );
 };
-export default CreateProduct;
+export default EditProduct;
