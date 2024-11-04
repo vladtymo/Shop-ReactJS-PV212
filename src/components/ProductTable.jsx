@@ -55,7 +55,7 @@ const ProductTable = () => {
                     <Link to={`/products/${record.id}`}>
                         <Button color="default" variant="outlined" icon={<InfoCircleFilled />} />
                     </Link>
-                    <Button style={{ color: '#61916e' }} variant="outlined" icon={<LikeFilled />} />
+                    <Button style={{ color: '#61916e' }} variant="outlined" icon={<LikeOutlined />} />
                     <Link to={`/edit/${record.id}`}>
                         <Button style={{ color: '#faad14' }} variant="outlined" icon={<EditFilled />} />
                     </Link>

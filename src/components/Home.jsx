@@ -6,8 +6,9 @@ export default function Home() {
         <div>
             <img style={{
                 objectFit: 'contain',
-                width: '100%'
-            }} src="" />
+                width: '100%',
+                height: '70vh'
+            }} src="https://tse4.mm.bing.net/th?id=OIG1.b6Pz45Xh.CzW6rm8wxAK&pid=ImgGn" />
         </div>
     )
 }
